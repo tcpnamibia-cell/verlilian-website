@@ -1,41 +1,24 @@
-document.addEventListener('DOMContentLoaded', function () {
-  var toggle = document.querySelector('.nav-toggle');
-  var navList = document.getElementById('nav-list');
+(function () {
+  var toggle = document.getElementById('nav-toggle');
+  var list = document.getElementById('nav-list');
+  if (!toggle || !list) return;
 
-  if (toggle && navList) {
-    toggle.addEventListener('click', function () {
-      var isOpen = navList.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', String(isOpen));
-    });
+  toggle.addEventListener('click', function () {
+    var open = list.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
 
-    navList.querySelectorAll('a').forEach(function (link) {
-      link.addEventListener('click', function () {
-        navList.classList.remove('open');
-        toggle.setAttribute('aria-expanded', 'false');
-      });
+  list.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', function () {
+      list.classList.remove('open');
+      toggle.setAttribute('aria-expanded', 'false');
     });
+  });
+
+  var header = document.querySelector('.site-header');
+  if (header) {
+    window.addEventListener('scroll', function () {
+      header.style.boxShadow = window.scrollY > 4 ? '0 1px 0 rgba(20,23,28,0.06)' : 'none';
+    }, { passive: true });
   }
-
-  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (!prefersReduced && 'IntersectionObserver' in window) {
-    var revealTargets = document.querySelectorAll('.manifest-card, .why-card, .about-body, .contact-card');
-    revealTargets.forEach(function (el) {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(14px)';
-      el.style.transition = 'opacity .5s ease, transform .5s ease';
-    });
-
-    var observer = new IntersectionObserver(function (entries, obs) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-          obs.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.15 });
-
-    revealTargets.forEach(function (el) { observer.observe(el); });
-  }
-});
+})();
